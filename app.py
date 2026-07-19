@@ -15,6 +15,79 @@ st.set_page_config(
     layout="wide",
 )
 
+# ---------------- Sidebar ----------------
+with st.sidebar:
+    st.title("📂 Knowledge Base")
+
+    uploaded_files = st.file_uploader(
+        "Upload Documents",
+        accept_multiple_files=True,
+        type=["pdf", "docx", "txt", "csv", "xlsx", "xls", "md", "html"],
+    )
+
+    if uploaded_files:
+        if st.button("📤 Upload"):
+            try:
+                docs = []
+
+                with st.spinner("Processing documents..."):
+                    for file in uploaded_files:
+                        docs.extend(load_uploaded_file(file))
+
+                    ingest_documents(docs)
+
+                st.success("Documents uploaded successfully!")
+                st.rerun()
+
+            except Exception as e:
+                st.error(f"Upload failed: {e}")
+
+    if st.button("🗑 Clear Chat"):
+        st.session_state.messages = []
+        st.rerun()
+
+    st.divider()
+    st.subheader("📑 Document Management")
+
+    documents = list_documents()
+
+    if documents:
+        for doc in documents:
+            with st.container():
+                st.write(f"📄 **{doc['filename']}**")
+                st.caption(f"Pages: {doc['pages']}")
+                st.caption(f"Chunks: {doc['chunks']}")
+                st.caption(f"Uploaded: {doc['uploaded_at'][:10]}")
+
+                if st.button(
+                    "Delete",
+                    key=f"delete_{doc['document_id']}",
+                ):
+                    delete_document(doc["document_id"])
+                    st.success("Document deleted.")
+                    st.rerun()
+    else:
+        st.info("No documents uploaded.")
+
+    st.divider()
+
+    if st.button("🗑 Clear Knowledge Base"):
+        try:
+            clear_collection()
+            st.success("Knowledge base cleared.")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Failed: {e}")
+
+    # ----------- Statistics -----------
+    total_docs = len(documents)
+    total_chunks = sum(doc.get("chunks", 0) for doc in documents)
+
+    st.divider()
+    st.subheader("📊 Statistics")
+    st.metric("Documents", total_docs)
+    st.metric("Chunks", total_chunks)
+
 # ---------------- Main Page ----------------
 st.title("📚 Enterprise Document Chatbot")
 st.caption("Ask questions from your uploaded knowledge base.")
@@ -91,77 +164,3 @@ if question:
             "content": answer,
         }
     )
-
-# ---------------- Sidebar ----------------
-with st.sidebar:
-    st.title("📂 Knowledge Base")
-
-    uploaded_files = st.file_uploader(
-        "Upload Documents",
-        accept_multiple_files=True,
-        type=["pdf", "docx", "txt", "csv", "xlsx", "xls", "md", "html"],
-    )
-
-    if uploaded_files:
-        if st.button("📤 Upload"):
-            try:
-                docs = []
-
-                with st.spinner("Processing documents..."):
-                    for file in uploaded_files:
-                        docs.extend(load_uploaded_file(file))
-
-                    ingest_documents(docs)
-
-                st.success("Documents uploaded successfully!")
-                st.rerun()
-
-            except Exception as e:
-                st.error(f"Upload failed: {e}")
-
-    if st.button("🗑 Clear Chat"):
-        st.session_state.messages = []
-        st.rerun()
-
-    st.divider()
-    st.subheader("📑 Document Management")
-
-    documents = list_documents()
-
-    if documents:
-        for doc in documents:
-            with st.container():
-                st.write(f"📄 **{doc['filename']}**")
-                st.caption(f"Pages: {doc['pages']}")
-                st.caption(f"Chunks: {doc['chunks']}")
-                st.caption(f"Uploaded: {doc['uploaded_at'][:10]}")
-
-                if st.button(
-                    "Delete",
-                    key=f"delete_{doc['document_id']}",
-                ):
-                    delete_document(doc["document_id"])
-                    st.success("Document deleted.")
-                    st.rerun()
-    else:
-        st.info("No documents uploaded.")
-
-    st.divider()
-
-    if st.button("🗑 Clear Knowledge Base"):
-        try:
-            clear_collection()
-            st.success("Knowledge base cleared.")
-            st.rerun()
-        except Exception as e:
-            st.error(f"Failed: {e}")
-
-    # ----------- Statistics -----------
-    total_docs = len(documents)
-    total_chunks = sum(doc.get("chunks", 0) for doc in documents)
-
-    st.divider()
-    st.subheader("📊 Statistics")
-    st.metric("Documents", total_docs)
-    st.metric("Chunks", total_chunks)
-
