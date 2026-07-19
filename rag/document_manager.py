@@ -14,7 +14,7 @@ def list_documents():
             "page",
             "chunk",
         ],
-        limit=1000,
+        limit=16384,
     )
     documents = {}
     for row in results:
