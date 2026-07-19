@@ -1,8 +1,8 @@
 import streamlit as st
 GROQ_API_KEY = st.secrets['groq_api_key']
 
-MILVUS_URI = st.secrets['server_uri']
-MILVUS_TOKEN = st.secrets['server_token']
+MILVUS_URI = st.secrets['milvus_uri']
+MILVUS_TOKEN = st.secrets['milvus_token']
 
 COLLECTION_NAME = "new_collection"
 
