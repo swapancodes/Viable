@@ -80,13 +80,13 @@ with st.sidebar:
             st.error(f"Failed: {e}")
 
     # ----------- Statistics -----------
-    total_docs = len(documents)
-    total_chunks = sum(doc.get("chunks", 0) for doc in documents)
+    #total_docs = len(documents)
+    #total_chunks = sum(doc.get("chunks", 0) for doc in documents)
 
     st.divider()
     st.subheader("📊 Statistics")
-    st.metric("Documents", total_docs)
-    st.metric("Chunks", total_chunks)
+    #st.metric("Documents", total_docs)
+    #st.metric("Chunks", total_chunks)
 
 # ---------------- Main Page ----------------
 st.title("📚 Enterprise Document Chatbot")
