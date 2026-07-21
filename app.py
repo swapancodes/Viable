@@ -80,22 +80,22 @@ with st.sidebar:
             st.error(f"Failed: {e}")
 
     # ----------- Statistics -----------
-from services.milvus_service import get_milvus_client
-from config import COLLECTION_NAME
+    from services.milvus_service import get_milvus_client
+    from config import COLLECTION_NAME
 
-def Statistics():
-    client = get_milvus_client()
-    if not client.has_collection(COLLECTION_NAME):
-        return     
+    def Statistics():
+        client = get_milvus_client()
+        if not client.has_collection(COLLECTION_NAME):
+           return     
         
-    total_docs = len(documents)
-    total_chunks = sum(doc.get("chunks", 0) for doc in documents)
+        total_docs = len(documents)
+        total_chunks = sum(doc.get("chunks", 0) for doc in documents)
 
-    st.divider()
-    st.subheader("📊 Statistics")
-    st.metric("Documents", total_docs)
-    st.metric("Chunks", total_chunks)
-Statistics ()
+        st.divider()
+        st.subheader("📊 Statistics")
+        st.metric("Documents", total_docs)
+        st.metric("Chunks", total_chunks)
+    Statistics ()
 
 # ---------------- Main Page ----------------
 st.title("📚 Enterprise Document Chatbot")
