@@ -3,6 +3,8 @@ from config import COLLECTION_NAME
 
 def list_documents():
     client = get_milvus_client()
+    if not client.has_collection(COLLECTION_NAME):
+        return 
 
     results = client.query(
         collection_name=COLLECTION_NAME,
